@@ -13,5 +13,5 @@ app.MapGet("/format", async (HttpContext context, IResponseFomatter formatter) =
     {
        await formatter.FormatResponse(context);
     });
-
+app.UseStaticFiles();
 app.Run();
