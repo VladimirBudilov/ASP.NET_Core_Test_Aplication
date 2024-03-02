@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Core.Models
 {
@@ -11,6 +12,7 @@ namespace Core.Models
         [ForeignKey("Category")]
         [Column("category_id")]
         public Guid CategoryId { get; set; }
+        [JsonIgnore]
         public Category Category { get; set; }
     }
 }

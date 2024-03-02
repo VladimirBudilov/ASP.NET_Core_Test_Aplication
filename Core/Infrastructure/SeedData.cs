@@ -14,7 +14,7 @@ namespace Core.Infrastructure
             {
                 new Category { Name = "Watersports"},
                 new Category { Name = "Soccer"},
-            };
+            };          
 
             var products = new[]
             {
