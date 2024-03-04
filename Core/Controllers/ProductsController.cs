@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Core.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly DataContext _context;
@@ -18,23 +18,49 @@ namespace Core.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Product> GetProducts()
+        public async Task<IEnumerable<Product>> GetProducts(ILogger<ProductsController> logger)
         {
-          return _context.Products;
+            logger.LogInformation("Getting products");
+            return await _context.Products.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public Product GetProduct(ILogger<ProductsController> logger)
+        public async Task<IActionResult> GetProduct(ILogger<ProductsController> logger)
         {
             logger.LogInformation("Getting product");
-            return _context.Products.FirstOrDefault();
+            Product? product = await _context.Products.FirstOrDefaultAsync();
+            if(product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
 
         [HttpPost]
-        public void AddProduct([FromBody]ProductDto product)
+        public async void AddProduct([FromBody] ProductDto product)
         {
             _context.Products.Add(new Product { Name = product.Name, CategoryId = product.CategoryId });
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+        }
+
+        [HttpPut]
+        public async void UpdateProduct([FromBody] Product product)
+        {
+            _context.Entry(product).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        [HttpDelete("{id}")]
+        public async void DeleteProduct(Guid id)
+        {
+            _context.Products.Remove(new Product { Id = id });
+            await _context.SaveChangesAsync();
+        }
+
+        [HttpGet("redirect")]
+        public IActionResult Redirect()
+        {
+            return Redirect("https://www.google.com");
         }
     }
 }
